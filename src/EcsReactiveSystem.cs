@@ -112,16 +112,10 @@ namespace Leopotam.Ecs.Reactive {
     /// </summary>
     /// <typeparam name="F">First component type.</typeparam>
     public abstract class EcsReactiveSystem<F> : EcsReactiveSystemBase where F : EcsFilter {
-        protected F _reactiveFilter = null;
+        protected readonly F ReactiveFilter = null;
 
-        public EcsReactiveSystem () { }
-
-        public EcsReactiveSystem (EcsWorld world) {
-            _reactiveFilter = (F) world.GetFilter (typeof (F));
-        }
-
-        sealed protected override EcsFilter GetFilter () {
-            return _reactiveFilter;
+        protected sealed override EcsFilter GetFilter () {
+            return ReactiveFilter;
         }
     }
 
@@ -129,7 +123,9 @@ namespace Leopotam.Ecs.Reactive {
     /// For internal use only! Special component for mark user components as updated.
     /// </summary>
     /// <typeparam name="T">User component type.</typeparam>
-    public class EcsUpdateReactiveFlag<T> where T : class { }
+    // ReSharper disable once ClassNeverInstantiated.Global
+    // ReSharper disable once UnusedTypeParameter
+    public class EcsUpdateReactiveFlag<T> : IEcsIgnoreInFilter where T : class { }
 
     /// <summary>
     /// Reactive system for processing updated components (EcsWorld.MarkComponentAsUpdated).
@@ -137,34 +133,23 @@ namespace Leopotam.Ecs.Reactive {
     /// <typeparam name="Inc1">Component type.</typeparam>
     public abstract class EcsUpdateReactiveSystem<Inc1> : EcsReactiveSystemBase where Inc1 : class {
         /// <summary>
-        /// EcsWorld instance.
-        /// </summary>
-        protected EcsWorld _world = null;
-
-        /// <summary>
         /// Internal filter for custom reaction on entities.
         /// </summary>
-        protected EcsFilter<EcsUpdateReactiveFlag<Inc1>> _reactiveFilter = null;
+        protected readonly EcsFilter<EcsUpdateReactiveFlag<Inc1>> ReactiveFilter = null;
 
-        public EcsUpdateReactiveSystem () { }
-
-        public EcsUpdateReactiveSystem (EcsWorld world) {
-            _world = world;
-            _reactiveFilter = (EcsFilter<EcsUpdateReactiveFlag<Inc1>>) _world.GetFilter (typeof (EcsFilter<EcsUpdateReactiveFlag<Inc1>>));
+        protected sealed override EcsFilter GetFilter () {
+            return ReactiveFilter;
         }
 
-        sealed protected override EcsFilter GetFilter () {
-            return _reactiveFilter;
-        }
-
-        sealed protected override EcsReactiveType GetReactiveType () {
+        protected sealed override EcsReactiveType GetReactiveType () {
             return EcsReactiveType.OnAdded;
         }
 
-        sealed protected override void RunReactive () {
-            foreach (var idx in _reactiveFilter) {
-                _reactiveFilter.Entities[idx].Destroy ();
+        protected sealed override void RunReactive () {
+            foreach (var idx in ReactiveFilter) {
+                ReactiveFilter.Entities[idx].Unset<EcsUpdateReactiveFlag<Inc1>> ();
             }
+
             RunUpdateReactive ();
         }
 
