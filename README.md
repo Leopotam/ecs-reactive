@@ -5,7 +5,7 @@ Reactive filters / systems for using with [Entity Component System Framework](ht
 
 > C#7.3 or above required for this framework.
 
-> Tested on unity 2018.3 (not dependent on it) and contains assembly definition for compiling to separate assembly file for performance reason.
+> Tested on unity 2019.1 (not dependent on it) and contains assembly definition for compiling to separate assembly file for performance reason.
 
 > **Important!** All reacted entities are just cached results: real entities / components already can be removed from world / component! If you know that you use similar behaviour (entity can be removed before reactive system starts to work) - `EcsWorld.IsEntityExists` method should be used at reactive system processing per each entity. But better to not remove entities before reactive systems.
 
@@ -23,7 +23,7 @@ By default last released version will be used. If you need trunk / developing ve
 
 ## As unity module from npm registry (Experimental)
 This repository can be installed as unity module from external npm registry with support of different versions. In this way new block should be added to `Packages/manifest.json` right after opening `{` bracket:
-```json
+```
   "scopedRegistries": [
     {
       "name": "Leopotam",
@@ -200,7 +200,7 @@ Result log:
 ```
 
 # License
-The software released under the terms of the [MIT license](./LICENSE). Enjoy.
+The software released under the terms of the [MIT license](./LICENSE.md). Enjoy.
 
 # Donate
 Its free opensource software, but you can buy me a coffee:
